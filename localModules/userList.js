@@ -1,47 +1,39 @@
-var fs = require('fs');
+const {WebClient} = require('@slack/client');
+const {debug} = require('./debug');
 
-var USER_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/';
-var USER_ID_PATH = USER_DIR + '_user_ids.json';
-var auth = require(USER_DIR + 'slackCREDS').xoxb;
-
-var WebClient = require('@slack/client').WebClient;
-var web = new WebClient(auth);
-
-var debug = require('./debug').debug;
+// slack WebClient reference
+let web;
 
 /**
  * createUserList()
  * Writes a complete list of current user objects to a JSON located at USER_ID_PATH
  *
  ** web.users.list(function()) Calls the SlackAPI function
- ** @param err
- ** @param info Contains complete returned user list JSON object
+ ** @param slackToken
  */
-function createUserList() {
+module.exports.createUserList = async (slackToken) => {
 
-    web.users.list(function (err, info) { // slack api, info returns a current user listing in json
+  if (typeof web === 'undefined') {
+    debug.log('creating new slack web client');
+    web = new WebClient(slackToken);
+  }
 
+  return await new Promise((resolve, reject) => {
+    web.users.list().then(result => {
+      debug.log('got response from slack web client');
 
-        if (err) {
-            console.log('web.users.list.error: ', err);
-            return;
-        }
+      if (result.ok) {
+        resolve(result.members);
+      } else {
+        debug.log('slack user list response not ok');
+        reject(result.error);
+      }
 
-        var nameById = {}; /** !! THIS IS NOT BEING USED ANYWHERE !! same as line: 37 !! */
+    }).catch(error => {
+      console.log('error getting user list', error);
+      reject(error);
+    });
 
-        fs.writeFile(USER_ID_PATH, JSON.stringify(info), (err) => {
-            if (err) {
-                console.log('start.js:error writing user list: ' + err)
-            }
+  });
 
-            debug.log('User list created at ' + USER_ID_PATH);
-        })
-
-
-
-    }); // eof web.users.list
-
-} // eof createUserList
-
-exports.createUserList = createUserList;
+};

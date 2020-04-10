@@ -1,21 +1,19 @@
 {
-"name": "YouSlackBot",
-"version": "1.0.0",
-"description": "Insert Youtube videos posted to Slack into a Youtube playlist.",
-"main": "start.js",
-"dependencies": {
-"@slack/client": "^3.6.1",
-"gapi": "0.0.3",
-"googleapis": "^14.2.0",
-"google-auth-library": "^0.9.10",
-"readline": "^1.3.0",
-"youtube-api": "^2.0.4"
-},
-"devDependencies": {},
-"scripts": {
-"test": "echo \"Error: no test specified\" && exit 1"
-},
-"author": "SoNiKBooM",
-"license": "MIT"
+  "name": "YouSlackBot",
+  "version": "1.0.0",
+  "description": "Insert Youtube videos posted to Slack into a Youtube playlist.",
+  "main": "start.js",
+  "dependencies": {
+    "@slack/client": "^5.0.2",
+    "gapi": "0.0.3",
+    "google-auth-library": "^6.0.0",
+    "googleapis": "^48.0.0",
+    "readline": "^1.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "SoNiKBooM",
+  "license": "MIT"
 }
-

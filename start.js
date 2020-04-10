@@ -1,58 +1,69 @@
-var fs = require('fs');
-var RtmClient = require('@slack/client').RtmClient;
-var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
+const {env} = require('process');
+const fs = require('fs');
+const path = require('path');
+const {RTMClient, WebClientEvent} = require('@slack/client');
+// var { RTM_EVENTS = require('@slack/client').RTM_EVENTS;
 
-var ytDigest = require('./localModules/ytDigest');
-var debug = require('./localModules/debug').debug;
-var createUserList = require('./localModules/userList').createUserList;
-var getName = require('./localModules/getName').getName;
+const ytDigest = require('./localModules/ytDigest');
+const {debug} = require('./localModules/debug');
+const {createUserList} = require('./localModules/userList');
+const {getName} = require('./localModules/getName');
 
-var USER_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/';
-var auth = require(USER_DIR + 'slackCREDS').xoxb;
+const CREDS_DIR = '.credentials';
+const HOME_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE);
+const SLACK_CREDS_FILE = 'slackCREDS';
+const {xoxb} = require(path.resolve(HOME_DIR, CREDS_DIR, SLACK_CREDS_FILE));
+let options = {};
+!!env.DEBUG ? options.logLevel = 'debug' : false;
+let rtm = new RTMClient(xoxb, options);
 
-var rtm = new RtmClient(auth);
+// why save user list to disk tho, let's not
+let userList;
+
 
 /**
  * Connects to the slack channel and is also used to
  * start up other required modules.
  */
-rtm.start(
-    debug.log('Slack Connected.'),
-    createUserList()
-); // eof rtm.start
+rtm.start().then(result => {
+  debug.log('connected to', result.team.domain);
 
+  createUserList(xoxb).then((data) => {
+    if (data) {
+      debug.log('it is data');
+      debug.log('# members: ', data.length);
+    }
+
+    userList = data;
+    // console.log(userList && userList.members ? userList.members.length : 0)
+    // console.log(global.userList && global.userList.members ? global.userList.members.length : 0)
+  })
+
+}).catch(error => {
+  console.log('error calling slack web api', error);
+}); // eof rtm.start
 
 /**
  * Turns the message events on and passes it along to look
  * for various components within the message text body.
- * 
+ *
  * rtm.on
  * Turns on message event watching.
  *
  ** handleRtmMessage Handles incoming message events from Slack
  ** @param {object} message  Contains incoming message object from Slack
  */
-rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
+rtm.on('message', function handleRtmMessage(message) {
 
-    if (message.type == undefined || message.text == undefined) {} // Detects Slack's returned auto events (eg. new youtube link previews) and then does nothing
+  if (message.type === 'message' && message.text !== '') {
+    debug.log(message.user, userList);
+    let nameId = getName(message.user, userList); // Sets nameId as the actual name of the message user not the ID
 
-    else if (message.type == 'message' && message.text != '') { // If message type is a message and not empty
+    if (message.text !== undefined && message.text.indexOf("youtu") >= 0) { // looks for youtube links and parses the ID with ytDigest module function in ./localModules/ - then logs message to console
+      ytDigest(message); // sends whole message object to be parsed and uploaded to youtube playlist
+    }
 
-    var nameId = getName(message.user); // Sets nameId as the actual name of the message user not the ID
-
-    if (message.text != undefined && message.text.indexOf("youtu") >= 0) { // looks for youtube links and parses the ID with ytDigest module function in ./localModules/ - then logs message to console
-
-        ytDigest(message); // sends whole message object to be parsed and uploaded to youtube playlist
-
-      }
-
-    else {
-
-        debug.log('start.js:message:', nameId + ': ' + message.text); // Logs all messages to the console with user name and message text
-
-        }
-
-    } // eof else if
+    debug.log('start.js:message:', nameId + ': ' + message.text); // Logs all messages to the console with user name and message text
+  }
 
 }); // eof rtm.on

@@ -19,12 +19,16 @@ module.exports = function purgeCache(moduleName) {
         // the cache
         if (mod && ((mod = require.cache[mod]) !== undefined)) {
             // Recursively go over the results
-            (function traverse(mod) {
+            (function traverse(mod, depth = 1) {
                 // Go over each of the module's children and
                 // traverse them
-                mod.children.forEach(function (child) {
-                    traverse(child);
-                });
+								if (mod.children) {
+									mod.children.forEach(function (child) {
+										if (depth < 4) {
+											traverse(child, depth + 1);
+										}
+									});
+								}
 
                 // Call the specified callback providing the
                 // found cached module
