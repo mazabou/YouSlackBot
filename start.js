@@ -28,8 +28,7 @@ rtm.start().then(result => {
 
   createUserList(xoxb).then((data) => {
     if (data) {
-      debug.log('it is data');
-      debug.log('# members: ', data.length);
+      debug.log('got user list. # members: ', data.length);
     }
 
     userList = data;
