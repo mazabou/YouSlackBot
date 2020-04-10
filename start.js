@@ -1,8 +1,7 @@
 const {env} = require('process');
 const fs = require('fs');
 const path = require('path');
-const {RTMClient, WebClientEvent} = require('@slack/client');
-// var { RTM_EVENTS = require('@slack/client').RTM_EVENTS;
+const {RTMClient} = require('@slack/client');
 
 const ytDigest = require('./localModules/ytDigest');
 const {debug} = require('./localModules/debug');
@@ -19,7 +18,6 @@ let rtm = new RTMClient(xoxb, options);
 
 // why save user list to disk tho, let's not
 let userList;
-
 
 /**
  * Connects to the slack channel and is also used to
