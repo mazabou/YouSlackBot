@@ -54,7 +54,7 @@ rtm.start().then(result => {
 rtm.on('message', function handleRtmMessage(message) {
 
   if (message.type === 'message' && message.text !== '') {
-    debug.log(message.user, userList);
+
     let nameId = getName(message.user, userList); // Sets nameId as the actual name of the message user not the ID
 
     if (message.text !== undefined && message.text.indexOf("youtu") >= 0) { // looks for youtube links and parses the ID with ytDigest module function in ./localModules/ - then logs message to console
