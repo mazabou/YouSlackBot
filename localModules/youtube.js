@@ -1,9 +1,9 @@
 var fs = require('fs');
 var readline = require('readline');
-var google = require('googleapis');
+var {google} = require('googleapis');
 var youtube = google.youtube('v3');
-var googleAuth = require('google-auth-library');
-
+// var {GoogleAuth} = require('google-auth-library');
+var { OAuth2Client } = require('google-auth-library');
 var SCOPES = ['https://www.googleapis.com/auth/youtube'];
 
 var CREDS_DIR = (process.env.HOME || process.env.HOMEPATH ||
@@ -50,9 +50,9 @@ function authorize(credentials, callback) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
-    var auth = new googleAuth();
-    var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-
+    //var auth = new GoogleAuth();
+    //var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+    var oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl);
     // Check if we have previously stored a token.
     fs.readFile(TOKEN_PATH, function(err, token) {
         if (err) { //if not get new token
