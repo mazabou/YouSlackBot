@@ -6,17 +6,13 @@ A nodeJS Slack Bot that inserts YouTube videos posted to a Slack channel into a 
 
 [Installation](#installing)
 
-For contributions, please see [Contributing](#contributing) section below.
-
-Feedback is always welcome. 
-  
-  Enjoy! :)
-
 ### Prerequisites
   * [nodeJS and npm](https://docs.npmjs.com/getting-started/installing-node)
   * [Slack Bot User](https://my.slack.com/services/new/bot) with [API Token](https://api.slack.com/tokens)
   * [Google Account](https://accounts.google.com/SignUp?hl=en)
-  * [Google oAuth2 key](https://console.developers.google.com) with [YouTube Data API v3](https://developers.google.com/youTube/v3/) scope.
+  * Google oAuth2 key with [YouTube Data API v3](https://developers.google.com/youTube/v3/) scope.
+    * [Enable Youtube Data API v3](https://console.developers.google.com/apis/dashboard). 
+    * [Create credential](https://console.developers.google.com/apis/credentials).
   * YouTube playlist ID
 
 ### The ~/.credentials Directory
@@ -27,9 +23,8 @@ To start the bot we will first require three separate files added to the ~/.cred
   
   * **slackCREDS.json** - This contains the slack API key. eg;
 ```
-module.exports =
 {
-xoxb: 'YOUR-KEY-HERE' 
+"xoxb": "xoxb-xxxxxxxxxxxx"
 }
 ```
   
@@ -75,9 +70,9 @@ $ sudo node node_modules/YouSlackBot/start.js
 Invite YouSlackBot to the Slack Channel you want it to watch.
 Example, inside the desired channel type:
 ```
-/invite YOUR-BOT-NAME
+/invite @YOUR-BOT-NAME
 ```
-  
+
 You should see that the bot is now online in Slack.
 
 **IMPORTANT:** On the first YouTube API request, you will be prompted to visit a URL from google to receive the API key. This prompt is in console and will **not** work without entering the returned key. You can initiate this by posting a valid YouYube video URL into the slack Channel and going back to the console. This only needs to be done once.  
@@ -89,12 +84,7 @@ Please read [CONTRIBUTING.md](https://github.com/SoNiKBooM/YouSlackBot/blob/dev/
 ## Authors
 
 * **Timothy Dell** - *Initial work* - [SoNiKBooM](https://github.com/SoNiKBooM)
-
-## Donate
-
-**BTC** 1Q19q6M39DjZkxM9ogW8ZSfGQKQzFX1TSN
-
-**ETH** 0xFeb6b03e0AD538B87B762f86b79e9bf1Df538054
+* **Glenn Kentwell** - *Refractor and updates* [glennkentwell](https://github.com/glennkentwell/YouSlackBot)
 
 ## License
 
